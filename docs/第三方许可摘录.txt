@@ -1,0 +1,137 @@
+浙里寻所含运行依赖：原有许可注释摘录
+
+以下原文摘自 src/runtime/legacy-vendor.js，源码中的原注释完整保留。
+该摘录用于方便审阅，不是依赖清单或新增授权；运行时提取来源见 src/runtime/ORIGIN.txt。
+
+/*! Bundled license information:
+
+scheduler/cjs/scheduler.production.js:
+  (**
+   * @license React
+   * scheduler.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+react/cjs/react.production.js:
+  (**
+   * @license React
+   * react.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+react-dom/cjs/react-dom.production.js:
+  (**
+   * @license React
+   * react-dom.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+react-dom/cjs/react-dom-client.production.js:
+  (**
+   * @license React
+   * react-dom-client.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+react/cjs/react-jsx-runtime.production.js:
+  (**
+   * @license React
+   * react-jsx-runtime.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/shared/src/utils.js:
+lucide-react/dist/esm/defaultAttributes.js:
+lucide-react/dist/esm/Icon.js:
+lucide-react/dist/esm/createLucideIcon.js:
+lucide-react/dist/esm/icons/arrow-down-to-line.js:
+lucide-react/dist/esm/icons/arrow-left.js:
+lucide-react/dist/esm/icons/arrow-right.js:
+lucide-react/dist/esm/icons/book-marked.js:
+lucide-react/dist/esm/icons/book-open.js:
+lucide-react/dist/esm/icons/calendar-days.js:
+lucide-react/dist/esm/icons/check.js:
+lucide-react/dist/esm/icons/chevron-down.js:
+lucide-react/dist/esm/icons/chevron-left.js:
+lucide-react/dist/esm/icons/chevron-right.js:
+lucide-react/dist/esm/icons/circle-help.js:
+lucide-react/dist/esm/icons/clipboard.js:
+lucide-react/dist/esm/icons/cloud.js:
+lucide-react/dist/esm/icons/external-link.js:
+lucide-react/dist/esm/icons/file-text.js:
+lucide-react/dist/esm/icons/filter.js:
+lucide-react/dist/esm/icons/folder-kanban.js:
+lucide-react/dist/esm/icons/folder-open.js:
+lucide-react/dist/esm/icons/folder.js:
+lucide-react/dist/esm/icons/git-branch.js:
+lucide-react/dist/esm/icons/history.js:
+lucide-react/dist/esm/icons/layers.js:
+lucide-react/dist/esm/icons/lightbulb.js:
+lucide-react/dist/esm/icons/link-2.js:
+lucide-react/dist/esm/icons/loader-circle.js:
+lucide-react/dist/esm/icons/log-out.js:
+lucide-react/dist/esm/icons/menu.js:
+lucide-react/dist/esm/icons/network.js:
+lucide-react/dist/esm/icons/plus.js:
+lucide-react/dist/esm/icons/refresh-cw.js:
+lucide-react/dist/esm/icons/search.js:
+lucide-react/dist/esm/icons/settings.js:
+lucide-react/dist/esm/icons/share-2.js:
+lucide-react/dist/esm/icons/shield-check.js:
+lucide-react/dist/esm/icons/sliders-horizontal.js:
+lucide-react/dist/esm/icons/sparkles.js:
+lucide-react/dist/esm/icons/trash-2.js:
+lucide-react/dist/esm/icons/upload.js:
+lucide-react/dist/esm/icons/waypoints.js:
+lucide-react/dist/esm/icons/x.js:
+lucide-react/dist/esm/lucide-react.js:
+  (**
+   * @license lucide-react v0.468.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+docx/dist/index.mjs:
+  (*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> *)
+  (*!
+  * The buffer module from node.js, for the browser.
+  *
+  * @author   Feross Aboukhadijeh <https://feross.org>
+  * @license  MIT
+  *)
+  (*! http://mths.be/fromcodepoint v0.1.0 by @mathias *)
+
+docx/dist/index.mjs:
+  (*!
+  
+  JSZip v3.10.2 - A JavaScript class for generating and reading zip files
+  <http://stuartk.com/jszip>
+  
+  (c) 2009-2016 Stuart Knightley <stuart [at] stuartk.com>
+  Dual licenced under the MIT license or GPLv3. See https://raw.github.com/Stuk/jszip/main/LICENSE.markdown.
+  
+  JSZip uses the library pako released under the MIT license :
+  https://github.com/nodeca/pako/blob/main/LICENSE
+  *)
+*/

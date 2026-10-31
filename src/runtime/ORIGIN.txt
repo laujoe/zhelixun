@@ -1,0 +1,5 @@
+Extracted without changing the embedded dependencies or original store.
+Source: 第二版 浙里寻-独立网页版.html
+SHA256: d86960968e88fc785b586122c4530120e987786e90d24130badf279ae5c35347
+React version is preserved from the existing bundle.
+Bundled license notices remain in legacy-vendor.js.

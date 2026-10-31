@@ -1,0 +1,10 @@
+{
+  "source": "src/data/source/descriptions.json",
+  "sourceSha256": "00657ce42c835cd88ea141a9bc7249eb2c60e7adb09dda4135314924db2c1786",
+  "importedAt": "2026-10-15T03:49:39.831Z",
+  "count": 394,
+  "minChars": 400,
+  "maxChars": 498,
+  "lengthExceptions": [],
+  "incompleteVerification": []
+}

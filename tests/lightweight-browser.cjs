@@ -1,0 +1,111 @@
+// Optional real-browser checks. Uses temporary profiles and local public files only.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const os = require('node:os');
+const http = require('node:http');
+const { once } = require('node:events');
+const { chromium } = require('playwright');
+
+(async () => {
+  const root = path.resolve(__dirname, '../dist/web');
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'zlx-light-browser-'));
+  const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webmanifest': 'application/manifest+json' };
+  let workerRevision = '';
+  const server = http.createServer((req, res) => {
+    const pathname = new URL(req.url, 'http://localhost').pathname;
+    const relative = pathname.startsWith('/trial/') ? pathname.slice(7) || 'index.html' : '';
+    const file = path.resolve(root, relative);
+    if (!relative || !file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) { res.writeHead(404); res.end(); return; }
+    res.setHeader('Content-Type', types[path.extname(file)] || 'application/octet-stream'); res.setHeader('Cache-Control', 'no-cache'); let content = fs.readFileSync(file); if (relative === 'sw.js' && workerRevision) content = Buffer.from(content.toString().replace(/const VERSION="[^"]+";/, 'const VERSION="' + workerRevision + '";')); res.end(content);
+  });
+  let browser, debugPage, passed = false;
+  try {
+    server.listen(0, '127.0.0.1'); await once(server, 'listening');
+    const base = 'http://127.0.0.1:' + server.address().port + '/trial/';
+    browser = await chromium.launch({ headless: true, ...(process.env.ZLX_BROWSER_PATH ? { executablePath: process.env.ZLX_BROWSER_PATH } : {}) });
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
+    await context.route(/^https?:\/\//, route => route.request().url().startsWith(base) ? route.continue() : route.abort());
+    const page = await context.newPage(), errors = [], failedResponses = []; page.setDefaultTimeout(15000); debugPage = page;
+    page.on('pageerror', e => { errors.push(e.message); console.error('Browser error:', e.message); }); page.on('response', r => { if (r.status() >= 400) failedResponses.push(r.url()); });
+    await page.goto(base);
+    assert.equal(await page.evaluate(() => ZLXExtras.available()), false, 'Static hosting must not request local model APIs');
+    await page.getByRole('button', { name: '进入演示空间', exact: true }).click();
+    await page.getByRole('button', { name: /开启全新研究/ }).click();
+    await page.getByLabel('项目名称', { exact: true }).fill('手机接续验收');
+    await page.getByRole('button', { name: '开始提出问题', exact: true }).click();
+    const input = page.getByPlaceholder('描述研究主题，小寻帮你在馆藏目录里找数据库…');
+    await input.fill('手机上的未发送草稿');
+    await page.getByRole('button', { name: /进入分析问题/ }).click();
+    assert.equal(await input.inputValue(), '');
+    await page.getByRole('button', { name: '提出问题', exact: true }).click();
+    assert.equal(await input.inputValue(), '手机上的未发送草稿');
+    await page.getByText('本阶段资料 ·', { exact: false }).click();
+    await page.getByRole('button', { name: '添加笔记', exact: true }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByPlaceholder('一个清楚、便于再次找到的标题').fill('可恢复草稿');
+    await dialog.getByLabel('正文', { exact: true }).fill('误关弹窗后仍能继续。');
+    await dialog.getByRole('button', { name: '取消', exact: true }).click();
+    await dialog.waitFor({ state: 'hidden' });
+    await page.getByRole('button', { name: '添加笔记', exact: true }).click();
+    assert.equal(await dialog.getByLabel('正文', { exact: true }).inputValue(), '误关弹窗后仍能继续。');
+    await page.setViewportSize({ width: 390, height: 430 });
+    await dialog.getByRole('button', { name: '保存', exact: true }).scrollIntoViewIfNeeded();
+    const bounds = await dialog.boundingBox(); assert.ok(bounds.height <= 410, 'Dialog fits a reduced visual viewport');
+    await dialog.getByRole('button', { name: '保存', exact: true }).click();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.getByLabel('导入文件', { exact: false }).setInputFiles(path.join(__dirname, 'fixtures/research-note.txt'));
+    await page.getByRole('button', { name: /research-note.txt/ }).first().waitFor();
+    console.log('Draft and narrow dialog checks passed.');
+    await page.getByRole('button', { name: '返回项目工作台', exact: true }).click();
+    const nav = async label => { const button = page.getByRole('button', { name: '打开导航', exact: true }); if (await button.isVisible()) await button.click(); await page.getByRole('button', { name: label, exact: true }).click(); };
+    await nav('导出与备份');
+    const downloadEvent = page.waitForEvent('download'); await page.getByRole('button', { name: '备份当前完整项目', exact: true }).click();
+    const download = await downloadEvent, backupPath = path.join(temp, 'backup.json'); await download.saveAs(backupPath);
+    const payload = JSON.parse(fs.readFileSync(backupPath));
+    assert.equal(payload.attachments.length, 1); assert.ok(payload.records.some(r => r.title === '可恢复草稿'));
+    assert.ok(!JSON.stringify(payload).includes('手机上的未发送草稿'), 'Drafts must not leak into a research backup');
+    await page.getByLabel('选择 JSON 或 CSV 文件', { exact: false }).setInputFiles(backupPath);
+    await page.getByRole('button', { name: '确认导入以上数据', exact: true }).waitFor();
+    assert.equal(await page.getByLabel('重复记录的处理方式').inputValue(), 'safe');
+    await page.getByRole('button', { name: '确认导入以上数据', exact: true }).click();
+    await page.getByText(/已新增 0 条、更新 0 条、跳过相同内容/).waitFor();
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Mobile page has no horizontal overflow');
+    await page.screenshot({ path: path.join(temp, 'mobile-backup.png'), fullPage: true, animations: 'disabled' });
+    console.log('Download and repeat import checks passed.');
+    await page.evaluate(() => Promise.race([navigator.serviceWorker.ready.then(() => true), new Promise((_, reject) => setTimeout(() => reject(new Error('Offline cache installation timed out')), 20000))]));
+    await page.reload(); await page.waitForFunction(() => navigator.serviceWorker.controller);
+    await context.setOffline(true); await page.reload();
+    await page.getByRole('button', { name: '进入演示空间', exact: true }).click();
+    await page.getByRole('button', { name: /进入研究平台/ }).click();
+    await nav('研究工作台');
+    assert.ok(await page.evaluate(() => JSON.parse(localStorage.getItem(ZLXCore.STATE_KEY)).records.some(r => r.title === '可恢复草稿')));
+    await context.setOffline(false);
+    workerRevision = 'test-next-version';
+    await page.evaluate(async () => { const registration = await navigator.serviceWorker.getRegistration(); await registration.update(); });
+    await page.getByRole('button', { name: '已保存，更新页面', exact: true }).waitFor();
+    assert.ok(await page.getByRole('heading', { name: '研究工作台', exact: true }).isVisible(), 'Update must wait for the user');
+    await Promise.all([page.waitForNavigation(), page.getByRole('button', { name: '已保存，更新页面', exact: true }).click()]);
+    await page.getByRole('button', { name: '进入演示空间', exact: true }).click();
+    await page.getByRole('button', { name: /进入研究平台/ }).click();
+    await nav('研究工作台');
+    assert.ok(await page.evaluate(() => JSON.parse(localStorage.getItem(ZLXCore.STATE_KEY)).records.some(r => r.title === '可恢复草稿')));
+    const mobileProjectId = await page.evaluate(() => JSON.parse(localStorage.getItem(ZLXCore.STATE_KEY)).records.find(r => r.kind === 'project' && r.title === '手机接续验收').id);
+    await page.locator('.workspace-toolbar select').selectOption(mobileProjectId);
+    await page.locator('.project-banner').getByRole('button', { name: '继续研究', exact: true }).click();
+    await page.getByRole('heading', { name: '提出问题', exact: true }).waitFor();
+    assert.equal(await page.locator('.dock-input').inputValue(), '手机上的未发送草稿');
+    await page.locator('.explore-exit').click();
+    assert.equal(await page.locator('.workspace-toolbar select').inputValue(), mobileProjectId);
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Mobile project entry does not overflow');
+    console.log('Offline reload and opt-in update checks passed.');
+    for (const width of [862, 1183, 1440]) { await page.setViewportSize({ width, height: 900 }); assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'No overflow at ' + width); }
+    await page.screenshot({ path: path.join(temp, 'desktop-workspace.png'), fullPage: true, animations: 'disabled' });
+    assert.deepEqual(errors, []); assert.deepEqual(failedResponses, []);
+    passed = true;
+    console.log('Lightweight browser checks passed: drafts, stage isolation, reduced viewport, attachment download, safe re-import, subpath deployment and offline reload. Screenshots: ' + temp);
+  } finally {
+    if (!passed && debugPage) { try { await debugPage.screenshot({ path: path.join(temp, 'failure.png'), fullPage: true, animations: 'disabled' }); console.error('Failure view:', (await debugPage.locator('body').innerText()).slice(-3500)); console.error('Artifacts:', temp); } catch {} }
+    await browser?.close(); server.closeAllConnections(); await new Promise(resolve => server.close(resolve));
+  }
+})().catch(error => { console.error(error); process.exitCode = 1; });

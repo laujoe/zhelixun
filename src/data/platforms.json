@@ -1,0 +1,80 @@
+[
+  {
+    "id": "research",
+    "name": "研在浙大",
+    "url": "https://research.zju.edu.cn/",
+    "sourceUrl": "https://zuits.zju.edu.cn/_s146/90696/list.psp",
+    "permission": "科研工作台需要浙江大学统一身份认证。",
+    "api": {
+      "status": "not_found",
+      "docsUrl": null,
+      "notes": "已检查资源入口和图书馆官方详情，未发现公开接口说明；这不代表平台没有接口。",
+      "checkedAt": "2026-10-13T13:44:28.903Z"
+    }
+  },
+  {
+    "id": "summon",
+    "name": "求是学术搜索",
+    "url": "https://zju.summon.serialssolutions.com/",
+    "sourceUrl": "https://libdb.zju.edu.cn/s/lib/libtb/show/1417",
+    "permission": "检索无访问限制；全文下载由对应数据库校验权限。",
+    "api": {
+      "status": "not_found",
+      "docsUrl": null,
+      "notes": "已检查资源入口和图书馆官方详情，未发现公开接口说明；这不代表平台没有接口。",
+      "checkedAt": "2026-10-13T13:44:30.568Z"
+    }
+  },
+  {
+    "id": "webvpn",
+    "name": "WebVPN",
+    "url": "https://webvpn.zju.edu.cn/",
+    "sourceUrl": "https://libweb.zju.edu.cn/2022/0408/c39478a2515130/page.htm",
+    "permission": "使用学校 VPN 账号登录后，在 WebVPN 内经图书馆资源导航进入数据库。",
+    "api": {
+      "status": "not_found",
+      "docsUrl": null,
+      "notes": "已检查资源入口和图书馆官方详情，未发现公开接口说明；这不代表平台没有接口。",
+      "checkedAt": "2026-10-13T13:44:28.895Z"
+    }
+  },
+  {
+    "id": "carsi",
+    "name": "CARSI 校外访问",
+    "url": "https://ds.carsi.edu.cn/",
+    "sourceUrl": "https://libweb.zju.edu.cn/2022/0408/c39478a2515130/page.htm",
+    "permission": "选择浙江大学并完成统一身份认证，仅支持已开通的资源。",
+    "api": {
+      "status": "not_found",
+      "docsUrl": null,
+      "notes": "已检查资源入口和图书馆官方详情，未发现公开接口说明；这不代表平台没有接口。",
+      "checkedAt": "2026-10-13T13:44:28.969Z"
+    }
+  },
+  {
+    "id": "rvpn",
+    "name": "RVPN",
+    "url": "https://vpn.zju.edu.cn/",
+    "sourceUrl": "https://libweb.zju.edu.cn/2022/0408/c39478a2515130/page.htm",
+    "permission": "按学校说明安装客户端并登录；只支持已开通的资源。",
+    "api": {
+      "status": "not_found",
+      "docsUrl": null,
+      "notes": "已检查资源入口和图书馆官方详情，未发现公开接口说明；这不代表平台没有接口。",
+      "checkedAt": "2026-10-13T13:44:28.884Z"
+    }
+  },
+  {
+    "id": "library",
+    "name": "图书馆数据库导航",
+    "url": "https://libdb.zju.edu.cn/",
+    "sourceUrl": "https://libweb.zju.edu.cn/2022/0408/c39478a2515130/page.htm",
+    "permission": "资源目录公开；进入资源后的全文权限分别校验。",
+    "api": {
+      "status": "not_found",
+      "docsUrl": null,
+      "notes": "已检查资源入口和图书馆官方详情，未发现公开接口说明；这不代表平台没有接口。",
+      "checkedAt": "2026-10-13T13:44:28.961Z"
+    }
+  }
+]
